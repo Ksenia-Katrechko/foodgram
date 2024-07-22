@@ -5,7 +5,7 @@ from recipes.models import Recipe
 from rest_framework.filters import SearchFilter
 
 
-class CustomFilterClass(filters.FilterSet):
+class RecipeFilter(filters.FilterSet):  # Исправила название.
     shopping_cart = filters.BooleanFilter(widget=BooleanWidget())
     favorite = filters.BooleanFilter(widget=BooleanWidget())
     tags = AllValuesMultipleFilter(field_name='tags__slug')

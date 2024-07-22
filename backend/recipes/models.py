@@ -1,15 +1,18 @@
 from django.db import models
 from accounts.models import User
 
+MAX_LENGTH_NAME = 150  # Все фиксированные значения вынесла в константы.
+DEFAULT_AMOUNT = 1
+
 
 class Tag(models.Model):
     name = models.CharField(
         'название',
         unique=True,
-        max_length=150,
+        max_length=MAX_LENGTH_NAME,
         help_text='Название тега'
     )
-    slug = models.SlugField(max_length=150)
+    slug = models.SlugField(max_length=MAX_LENGTH_NAME)
 
     class Meta:
         ordering = ('name',)
@@ -23,18 +26,23 @@ class Tag(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(
         'название',
-        max_length=150,
+        max_length=MAX_LENGTH_NAME,
         help_text='Название ингредиента'
     )
     measurement_unit = models.CharField(
         'единица измерения',
-        max_length=150,
+        max_length=MAX_LENGTH_NAME,
     )
 
     class Meta:
         ordering = ('name',)
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'measurement_unit'],
+                                    name='unique_name_measurement_unit')
+        ]
+        # Проверки уникальности пары "название-единица измерения".
 
     def __str__(self):
         return self.name
@@ -43,7 +51,7 @@ class Ingredient(models.Model):
 class Recipe(models.Model):
     name = models.CharField(
         'название',
-        max_length=150,
+        max_length=MAX_LENGTH_NAME,
         help_text='Название рецепта'
     )
     text = models.TextField('текст', help_text='Здесь Ваш текст')
@@ -103,7 +111,7 @@ class IngredientInRecipe(models.Model):
         verbose_name='Рецепт'
     )
     amount = models.PositiveSmallIntegerField(
-        default=1,
+        default=DEFAULT_AMOUNT,
         verbose_name='Количество',
         help_text='Количество ингредиента',
     )
@@ -121,53 +129,43 @@ class IngredientInRecipe(models.Model):
         return f'{self.ingredient}'
 
 
-class Favorite(models.Model):
-    recipe = models.ForeignKey(
-        Recipe,
-        on_delete=models.CASCADE,
-        related_name='favorites',
-        verbose_name='рецепт'
-    )
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='favorites',
-        verbose_name='автор'
-    )
-
-    class Meta:
-        ordering = ('recipe', 'user')
-        verbose_name = 'Избранное'
-        verbose_name_plural = 'Избранное'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['recipe', 'user'],
-                name='unique_favorite')
-        ]
-
-
-class ShoppingCart(models.Model):
+class UserRecipeRelation(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name='Пользователь',
-        related_name='shopping_cart'
+        related_name='%(class)ss'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         verbose_name='Рецепт',
-        related_name='shopping_cart'
+        related_name='%(class)ss'
     )
 
     class Meta:
-        verbose_name = 'Список покупок'
-        verbose_name_plural = 'Списки покупок'
+        abstract = True
+        ordering = ('recipe', 'user')
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'user'],
-                name='unique_recipe')
+                name='unique_%(class)s'
+            )
         ]
 
     def __str__(self):
         return f'{self.user}, {self.recipe}'
+
+# Создала базовую модель и наследовала для Favorite, ShoppingCart
+
+
+class Favorite(UserRecipeRelation):
+    class Meta(UserRecipeRelation.Meta):
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранное'
+
+
+class ShoppingCart(UserRecipeRelation):
+    class Meta(UserRecipeRelation.Meta):
+        verbose_name = 'Список покупок'
+        verbose_name_plural = 'Списки покупок'

@@ -14,6 +14,7 @@ INGREDIENT_ADDED = 'Ингредиент не должен повторятьс�
 TAG_ADDED = 'Тег не должен повторяться!'
 SHOPLIST_ADDED = 'Рецепт уже добавлен в список покупок!'
 INGREDIENT_MORE_ZERO = 'Количество ингредиента должно быть больше 0!'
+INGREDIENTS_EMPTY = 'Рецепт должен содержать хотя бы один ингредиент!'
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -110,6 +111,9 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients = self.initial_data.get('ingredients')
         tags = self.initial_data.get('tags', [])
         data_list = []
+        if not ingredients:
+            raise serializers.ValidationError(INGREDIENTS_EMPTY)
+        # Валидация, которая не позволит создать рецепт без ингредиентов.
         for ingredient in ingredients:
             if int(ingredient['amount']) <= 0:
                 raise serializers.ValidationError(INGREDIENT_MORE_ZERO)
@@ -124,6 +128,7 @@ class RecipeSerializer(serializers.ModelSerializer):
                 data_list.append(tag)
         if data['cooking_time'] <= 0:
             raise serializers.ValidationError(COOKING_TIME_MORE_ZERO)
+        # Валидация, которая не позволит создать рецепт без времени.
         del data_list
         data['ingredients'] = ingredients
         data['tags'] = tags

@@ -42,11 +42,13 @@ class CustomUserViewSet(UserViewSet):
         if user == following:
             return Response({
                 'errors': FOLLOW_YOURSELF_ERROR
+                # Валидация подписки на самого себя.
             }, status=status.HTTP_400_BAD_REQUEST)
 
         if Follow.objects.filter(user=user, following=following).exists():
             return Response({
                 'errors': FOLLOW_USER_ERROR
+                # Валидация повторной подписки на пользователя.
             }, status=status.HTTP_400_BAD_REQUEST)
 
         follow = Follow.objects.create(user=user, following=following)

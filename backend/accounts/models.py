@@ -4,6 +4,7 @@ from django.core.validators import RegexValidator
 
 
 class User(AbstractUser):
+    ''' Модель пользователя. '''
     username_validator = RegexValidator(
         regex=r'^[\w.@+-]+$',
         message=(
@@ -39,13 +40,20 @@ class User(AbstractUser):
         null=True
     )
     USERNAME_FIELD = 'email'
+    # Логин в админку через e-mail.
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+    # Суперпользователь создается с ФИО.
 
     def __str__(self):
         return self.username
 
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
 
 class Follow(models.Model):
+    ''' Модель подписки. '''
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='follower',
     )
