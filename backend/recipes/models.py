@@ -1,8 +1,7 @@
 from django.db import models
 from accounts.models import User
-
-MAX_LENGTH_NAME = 150  # Все фиксированные значения вынесла в константы.
-DEFAULT_AMOUNT = 1
+from constants import DEFAULT_AMOUNT, MAX_LENGTH_NAME
+# вынесла константы в отдельный файл
 
 
 class Tag(models.Model):
@@ -163,9 +162,13 @@ class Favorite(UserRecipeRelation):
     class Meta(UserRecipeRelation.Meta):
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
+        default_related_name = 'favorites'
+        #  использовала default_related_name в классе меты дочернего класса
 
 
 class ShoppingCart(UserRecipeRelation):
     class Meta(UserRecipeRelation.Meta):
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
+        default_related_name = 'shopping_carts'
+        #  использовала default_related_name в классе меты дочернего класса

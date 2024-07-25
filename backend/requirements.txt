@@ -1,5 +1,7 @@
 Django==3.2.3
 djangorestframework==3.12.4
+django-filter==2.4.0
+drf-extra-fields
 django-cors-headers
 gunicorn==20.1.0
 djoser==2.1.0
