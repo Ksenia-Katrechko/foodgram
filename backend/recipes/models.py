@@ -1,6 +1,7 @@
 from django.db import models
+
 from accounts.models import User
-from constants import DEFAULT_AMOUNT, MAX_LENGTH_NAME
+from .constants import DEFAULT_AMOUNT, MAX_LENGTH_NAME
 # вынесла константы в отдельный файл
 
 

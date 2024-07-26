@@ -2,9 +2,11 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import RegexValidator
 
+from .constants import MAX_LENGTH
+
 
 class User(AbstractUser):
-    ''' Модель пользователя. '''
+    """ Модель пользователя. """  # исправила докстринги
     username_validator = RegexValidator(
         regex=r'^[\w.@+-]+$',
         message=(
@@ -13,25 +15,25 @@ class User(AbstractUser):
         )
     )
     email = models.EmailField(
-        max_length=50,
+        max_length=MAX_LENGTH,  # вынесла в константы
         unique=True,
         verbose_name='Почта'
     )
     username = models.CharField(
         blank=False,
-        max_length=50,
+        max_length=MAX_LENGTH,
         unique=True,
         verbose_name='Имя пользователя',
         validators=[username_validator]
     )
     first_name = models.CharField(
         blank=False,
-        max_length=50,
+        max_length=MAX_LENGTH,
         verbose_name='Имя'
     )
     last_name = models.CharField(
         blank=False,
-        max_length=50,
+        max_length=MAX_LENGTH,
         verbose_name='Фамилия'
     )
     avatar = models.ImageField(
@@ -53,13 +55,14 @@ class User(AbstractUser):
 
 
 class Follow(models.Model):
-    ''' Модель подписки. '''
+    """ Модель подписки. """
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='follower',
     )
     following = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='following',
     )
+    # валидация добавлена во views.py
 
     class Meta:
         ordering = ('user', 'following',)

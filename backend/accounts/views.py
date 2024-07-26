@@ -1,13 +1,14 @@
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from recipes.pagination import PageNumberPaginator
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
+from recipes.pagination import PageNumberPaginator
 from .models import Follow, User
 from .serializers import FollowSerializer, UserSerializer
+# исправила здесь и во всем приложении
 
 FOLLOW_YOURSELF_ERROR = 'Нельзя подписываться на себя!'
 FOLLOW_USER_ERROR = 'Вы уже подписаны на пользователя!'
