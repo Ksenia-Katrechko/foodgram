@@ -11,6 +11,8 @@ class RecipeFilter(filters.FilterSet):  # Исправила название.
     favorite = filters.BooleanFilter(widget=BooleanWidget())
     tags = AllValuesMultipleFilter(field_name='tags__slug')
     following = AllValuesMultipleFilter(field_name='author__id')
+    author = AllValuesMultipleFilter(field_name='author__id')
+    # Исправила фильтр. Теперь видны рецепты только автора при клике на него.
 
     class Meta:
         model = Recipe

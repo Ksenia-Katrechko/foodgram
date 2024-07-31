@@ -36,8 +36,9 @@ services:
     ports:
       - 7000:70
     volumes:
-      - static:/staticfiles/
-      - media:/media/
+      - ../docs/:/usr/share/nginx/html/api/docs/
+      - static:/var/html/staticfiles/
+      - media:/var/html/media/
     depends_on:
       - backend
       - frontend
