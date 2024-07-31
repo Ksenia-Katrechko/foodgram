@@ -1,3 +1,5 @@
+
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import RegexValidator
@@ -68,3 +70,16 @@ class Follow(models.Model):
         ordering = ('user', 'following',)
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'following'],
+                                    name='unique_follow')
+        ]
+
+    def clean(self):
+        if self.user == self.following:
+            raise ValidationError("Нельзя подписываться на самого себя.")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+    # Добавила валидацию.
