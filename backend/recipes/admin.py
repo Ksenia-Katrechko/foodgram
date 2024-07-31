@@ -1,8 +1,6 @@
 from django.contrib import admin
-
 from .models import (Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag, Favorite)
-# исправила здесь и далее по коду
 
 
 class IngredientInRecipeInLine(admin.TabularInline):

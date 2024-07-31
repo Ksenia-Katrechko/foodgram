@@ -1,12 +1,11 @@
 from django_filters import AllValuesMultipleFilter
 from django_filters import rest_framework as filters
 from django_filters.widgets import BooleanWidget
+from recipes.models import Recipe
 from rest_framework.filters import SearchFilter
 
-from recipes.models import Recipe
 
-
-class RecipeFilter(filters.FilterSet):  # Исправила название.
+class CustomFilterClass(filters.FilterSet):
     shopping_cart = filters.BooleanFilter(widget=BooleanWidget())
     favorite = filters.BooleanFilter(widget=BooleanWidget())
     tags = AllValuesMultipleFilter(field_name='tags__slug')

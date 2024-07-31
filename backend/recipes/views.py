@@ -4,7 +4,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from .filters import RecipeFilter, IngredientSearchFilter
+from .filters import CustomFilterClass, IngredientSearchFilter
 from .mixins import GETRequestsMixins
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .pagination import PageNumberPaginator
@@ -29,7 +29,7 @@ class IngredientViewSet(GETRequestsMixins):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPaginator
-    filter_class = RecipeFilter
+    filter_class = CustomFilterClass
     ordering_fields = ('-pub_date',)
     permission_classes = [AdminUserOrReadOnly]
 
