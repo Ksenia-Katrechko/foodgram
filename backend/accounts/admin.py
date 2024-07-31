@@ -1,7 +1,24 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.core.exceptions import ValidationError
+from django.forms import ModelForm
 
 from .models import User, Follow
+
+
+class FollowAdminForm(ModelForm):
+    class Meta:
+        model = Follow
+        fields = '__all__'
+
+    def clean(self):
+        super().clean()
+        if self.cleaned_data['user'] == self.cleaned_data['following']:
+            raise ValidationError("Нельзя подписываться на самого себя.")
+
+
+class FollowAdmin(admin.ModelAdmin):
+    form = FollowAdminForm
 
 
 class CustomUserAdmin(UserAdmin):
